@@ -1,22 +1,21 @@
-pip install streamlit
+
+
 import streamlit as st
 import pandas as pd
 import joblib
 import numpy as np
 
 # Streamlit App Title
-st.title('Monthly Income Prediction App')
-st.write('Select a model and enter employee details to predict their monthly income.')
+st.title('Monthly Income Prediction App (Linear Regression)')
+st.write('Enter employee details to predict their monthly income using the Linear Regression model.')
 
-# Load all saved models
-models = {}
+# Load the saved Linear Regression model
+# Make sure the model file 'linear_regression_model.sav' is in the same directory or provide the correct path.
 try:
-    models['Linear Regression'] = joblib.load('linear_regression_model.sav')
-    models['Ridge Regression'] = joblib.load('ridge_regression_model.sav')
-    models['Lasso Regression'] = joblib.load('lasso_regression_model.sav')
-    st.success("All models loaded successfully!")
+    model_pipeline = joblib.load('linear_regression_model.sav')
+    st.success("Linear Regression model loaded successfully!")
 except FileNotFoundError:
-    st.error("Error: One or more model files not found. Please ensure 'linear_regression_model.sav', 'ridge_regression_model.sav', and 'lasso_regression_model.sav' are in the correct directory.")
+    st.error("Error: 'linear_regression_model.sav' not found. Please ensure the model file is in the correct path.")
     st.stop()
 
 # Define the exact order of original feature columns used during training
@@ -31,12 +30,8 @@ original_feature_columns = [
     'YearsSinceLastPromotion', 'YearsWithCurrManager'
 ]
 
-# Sidebar for model selection and feature input
+# Sidebar for feature input
 with st.sidebar:
-    st.header('Configuration')
-    selected_model_name = st.selectbox('Choose a Model', list(models.keys()))
-    model_pipeline = models[selected_model_name]
-
     st.header('Employee Features Input')
 
     age = st.slider('Age', 18, 60, 30)
@@ -114,7 +109,7 @@ st.write(input_data)
 if st.button('Predict Monthly Income'):
     try:
         prediction = model_pipeline.predict(input_data)[0]
-        st.subheader('Predicted Monthly Income (using ' + selected_model_name + '):')
+        st.subheader('Predicted Monthly Income (using Linear Regression):')
         st.success(f'The predicted monthly income is: ${prediction:,.2f}')
     except Exception as e:
         st.error(f"An error occurred during prediction: {e}")
