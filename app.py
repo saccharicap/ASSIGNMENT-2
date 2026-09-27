@@ -1,3 +1,4 @@
+%%writefile app.py
 
 import streamlit as st
 import pandas as pd
@@ -18,6 +19,18 @@ try:
 except FileNotFoundError:
     st.error("Error: One or more model files not found. Please ensure 'linear_regression_model.sav', 'ridge_regression_model.sav', and 'lasso_regression_model.sav' are in the correct directory.")
     st.stop()
+
+# Define the exact order of original feature columns used during training
+# This is crucial for consistency with the fitted ColumnTransformer
+original_feature_columns = [
+    'Age', 'BusinessTravel', 'DailyRate', 'Department', 'DistanceFromHome',
+    'Education', 'EducationField', 'EnvironmentSatisfaction', 'Gender', 'HourlyRate',
+    'JobInvolvement', 'JobLevel', 'JobRole', 'JobSatisfaction', 'MaritalStatus',
+    'MonthlyRate', 'NumCompaniesWorked', 'OverTime', 'PercentSalaryHike',
+    'PerformanceRating', 'RelationshipSatisfaction', 'StockOptionLevel', 'TotalWorkingYears',
+    'TrainingTimesLastYear', 'WorkLifeBalance', 'YearsAtCompany', 'YearsInCurrentRole',
+    'YearsSinceLastPromotion', 'YearsWithCurrManager'
+]
 
 # Sidebar for model selection and feature input
 with st.sidebar:
@@ -89,6 +102,10 @@ input_data = pd.DataFrame({
     'YearsSinceLastPromotion': [years_since_last_promotion],
     'YearsWithCurrManager': [years_with_curr_manager]
 })
+
+# IMPORTANT: Reindex the input_data to match the original feature columns order
+# This ensures consistency with the fitted ColumnTransformer
+input_data = input_data[original_feature_columns]
 
 # Display input data
 st.subheader('Input Features:')
